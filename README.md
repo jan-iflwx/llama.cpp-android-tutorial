@@ -124,6 +124,8 @@ cp $PREFIX/include/openblas/openblas_config.h .
 
 #### Build
 
+Note!!!Could use [official guide](https://github.com/ggerganov/llama.cpp/blob/master/docs/build.md) instead.
+
 ```bash
 cd ~/llama.cpp
 mkdir build
@@ -141,7 +143,7 @@ echo "export LD_LIBRARY_PATH=/vendor/lib64:/vendor/lib64/egl:$LD_LIBRARY_PATH" >
 Check GPU is available for OpenCL:
 
 ```bash
-clinfo -l
+LD_LIBRARY_PATH=/vendor/lib64:/vendor/lib64/egl clinfo -l
 ```
 
 If everything works fine, for Qualcomm Snapdragon SoC, it will display:
