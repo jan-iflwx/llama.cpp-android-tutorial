@@ -18,6 +18,13 @@ termux-change-repo
 
 Check [here](https://wiki.termux.com/wiki/Package_Management) for more help.
 
+## Init termux and ollama:
+- reference blog: https://medium.com/@researchgraph/how-to-run-llama-3-2-on-android-phone-64be7783c89f
+
+Note：
+- The current ollama 0.4.0-rc has bugs: https://github.com/ollama/ollama/issues/7293, use `git checkout tags/v0.3.14` instead
+- might need to `pkg install gzip`
+
 ## Install necessary code and packages
 
 Download following packages in termux:
@@ -110,8 +117,9 @@ cp ./include/clblast.h ../llama.cpp
 Copy OpenBLAS files to llama.cpp:
 
 ```bash
-cp /data/data/com.termux/files/usr/include/openblas/cblas.h .
-cp /data/data/com.termux/files/usr/include/openblas/openblas_config.h .
+cd ../llama.cpp
+cp $PREFIX/include/openblas/cblas.h .
+cp $PREFIX/include/openblas/openblas_config.h .
 ```
 
 #### Build
@@ -125,9 +133,9 @@ cmake --build . --config Release
 ```
 
 Add `LD_LIBRARY_PATH` under `~/.bashrc`（Run program directly on physical GPU）：
-
+ADD `egl` directory also if prompt error "cannot find libGLES_mali.so"
 ```bash
-echo "export LD_LIBRARY_PATH=/vendor/lib64:$LD_LIBRARY_PATH" >> ~/.bashrc
+echo "export LD_LIBRARY_PATH=/vendor/lib64:/vendor/lib64/egl:$LD_LIBRARY_PATH" >> ~/.bashrc
 ```
 
 Check GPU is available for OpenCL:
@@ -146,9 +154,15 @@ Platform #0: QUALCOMM Snapdragon(TM)
 Run:
 
 ```bash
-cd bin/
-./main YOUR_PARAMETERS
+cd ~/llama.cpp/build/bin/
+./llama-cli -m your_model.gguf -p "You are a helpful assistant" -cnv
 ```
+
+Note: The model ollama downloaded to local can be found via the following steps:
+
+1. cd to `~/.ollama`，`cat ~/.ollama/models/manifests/registry.ollama.ai/library/llama3.2/3b`, find the filename which `mediaType` is `application/vnd.ollama.image.model`
+2. get the file as `~/.ollama/models/blobs/sha256-xxxx`，which is the .gguf model
+
 
 #### Results
 
